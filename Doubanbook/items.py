@@ -9,7 +9,7 @@
 from scrapy import Field, Item
 
 class DoubanbookItem(Item):
-    douban_id = Field() #豆瓣图书ID
+    subject_id = Field() #豆瓣图书ID
     type = Field()  #类型
     name = Field()  #标题
     sub_name = Field()  #副标题

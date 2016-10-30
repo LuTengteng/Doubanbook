@@ -71,9 +71,18 @@ DOWNLOADER_MIDDLEWARES = {
 DEPTH_PRIORITY = 1
 SCHEDULER_DISK_QUEUE = "scrapy.squeue.PickleFifoDiskQueue"
 SCHEDULER_MEMORY_QUEUE = "scrapy.squeue.FifoMemoryQueue"
+# 强制在硬盘上使用
+JOBDIR= 'crawls/book-1'
+
+#宽度优先
+#SCHEDULER_ORDER ='BFO'
 
 #布隆过滤
 DUPEFILTER_CLASS = "Doubanbook.bloomfilter.BLOOMDupeFilter"
+
+# mongodb配置
+MONGO_URL = 'mongodb://localhost:27017'
+MONGO_DATABASE = 'douban'
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html

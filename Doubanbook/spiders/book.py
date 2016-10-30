@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import re
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 
 from Doubanbook.items import DoubanbookItem
-
+PAGES_RE = re.compile(r"页数:</span> (\d+)<br>")
 
 class BookSpider(CrawlSpider):
     name = 'book'
     allowed_domains = ['book.douban.com']
-    start_urls = ['https://book.douban.com/']
+    start_urls = ['https://book.douban.com/tag/',
+                  'https://book.douban.com/',]
 
     rules = (
         Rule(LinkExtractor(allow=r"/subject/\d+/($|\?\w+)"), callback='parse_item', follow=True),
-        #Rule(LinkExtractor(allow=r'/tag/.+/($|\?\w+)')),   组合成包含tag的链接
+        Rule(LinkExtractor(allow=r'.tag/.*')),   #组合成包含tag的链接
     )
 
     def parse_item(self, response):
         item = DoubanbookItem()
 
-        item["douban_id"] = int(response.url.split("/")[-2])
+        item["subject_id"] = int(response.url.split("/")[-2])
         item["type"] = 'book'
         self.get_name(response, item)
         self.get_sub_name(response, item)
@@ -73,8 +75,10 @@ class BookSpider(CrawlSpider):
         publish_date = response.xpath('//text()[preceding-sibling::span[text()="出版年:"]][following-sibling::br]').extract()
         if publish_date: item['publish_date'] = publish_date[0]
     def get_pages(self, response, item):
-        pages = response.xpath('//text()[preceding-sibling::span[text()="页数:"]][following-sibling::br]').extract()
-        if pages and pages[0] !=' /': item['pages'] = pages[0]
+        S = "".join(response.xpath("//div[@id='info']").extract())
+        M = PAGES_RE.search(S)
+        if M is not None:
+            item['pages']  = int(M.group(1))
     def get_price(self, response, item):
         price = response.xpath('//text()[preceding-sibling::span[text()="定价:"]][following-sibling::br]').extract()
         if price: item['price'] = price[0]
