@@ -8,7 +8,7 @@ from scrapy.dupefilters import BaseDupeFilter
 class BLOOMDupeFilter(BaseDupeFilter):
     def __init__(self, path=None):
         self.file = None
-        self.fingerprints = BloomFilter(capacity=1000000, error_rate=0.001)
+        self.fingerprints = BloomFilter(capacity=100000000, error_rate=0.001)
  
     @classmethod
     def from_settings(cls, settings):
